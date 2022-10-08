@@ -4,7 +4,8 @@ A simple python generator to create .png versions of the 2022 refresh of my Nxme
 - [Nxmee/Antiviral Logo Generator](#nxmeeantiviral-logo-generator)
   - [Requirements](#requirements)
   - [Usage](#usage)
-    - [Generate_NX_AV_Logo.py [-h] [-b BACKGROUND] [-c COLOR] [-r ROTATION |-n | -a] [-p PREFIX] [-s SUFFIX] [-f FOLDER] sizes [sizes ...]](#generate_nx_av_logopy--h--b-background--c-color--r-rotation--n---a--p-prefix--s-suffix--f-folder-sizes-sizes-)
+    - [Base Use](#base-use)
+    - [Arguments](#arguments)
 
 ## Requirements
 - Inkscape 1.2.1 or above in PATH
@@ -13,8 +14,10 @@ A simple python generator to create .png versions of the 2022 refresh of my Nxme
 
 ## Usage
 
-### Generate_NX_AV_Logo.py [-h] [-b BACKGROUND] [-c COLOR] [-r ROTATION |-n | -a] [-p PREFIX] [-s SUFFIX] [-f FOLDER] sizes [sizes ...]
+### Base Use
+Python Generate_NX_AV_Logo.py size
 
+### Arguments
 
 **Positional arguments:**
 
