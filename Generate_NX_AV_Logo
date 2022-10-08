@@ -1,0 +1,15 @@
+"""
+Exporting the Nxmee/AV logo to whatever size, background, orientation you want using inkscape.
+
+Requires inkscape to be in PATH
+
+Author: Chris Hart
+Email: Chris@nxmee.com
+Version: 
+"""
+
+def main():
+   return
+
+if __name__ == "__main__":
+    main()
