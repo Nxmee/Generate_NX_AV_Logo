@@ -11,6 +11,7 @@ Version:
 import argparse
 from pathlib import Path, PurePath
 import re
+from subprocess import check_call
 import tempfile
 
 BASE_LOGO = [
@@ -150,9 +151,31 @@ def create_temp_file(args: argparse.Namespace) -> PurePath:
 
     return temp_path
 
+def convert_svg(args: argparse.Namespace, temp_location: PurePath):
+    """Uses shell commands to convert the temporary SVG into PNG files 
+
+        This function calls upon inkscape to generate PNG files for the logo
+
+    Args:
+        args: the argument namespace from parse_args()
+        temp_location: the location of the temporary SVG file to convert
+    """
+    out_path = Path(args.folder)
+    try:
+        out_path.mkdir(parents=True, exist_ok=True)
+    except Exception as e:
+        raise PermissionError(f"{e.message}, Specified folder cannot be created")
+
+    for size in args.sizes:
+        file_name = f"{args.prefix}{str(size)}{args.suffix}.png"
+        file_path = out_path.joinpath(file_name)
+        inkscape_string = f'inkscape "{temp_location}" --export-width={str(size)} --export-type=png --export-filename="{file_path}" --export-background-opacity=0'
+        check_call(inkscape_string)
+
 def main():
     args = parse_args()
     temp_location = create_temp_file(args)
+    convert_svg(args, temp_location)
 
 if __name__ == "__main__":
     main()
