@@ -9,8 +9,26 @@ Version:
 """
 
 import argparse
-from pathlib import Path
+from pathlib import Path, PurePath
 import re
+import tempfile
+
+BASE_LOGO = [
+    '<svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">',
+    '   <rect width="512" height="512" fill="{bg_fill}"/>',
+    '   <g transform="rotate({rotation},256,256)" fill="none" stroke="{logo_stroke}">',
+    '       <g stroke-width="55">',
+    '           <path d="m221.38 182.49 220.94 220.94"/>',
+    '           <path d="m236.56 452.55 249.44-249.44"/>',
+    '           <path transform="rotate(195 243.19 261.31)" d="m317.08 483.96-122.16-455.92"/>',
+    '           <path d="m21.904 265.8 199.48-199.48"/>',
+    "       </g>"
+    '       <path d="m492 256a236 236 0 0 1-236 236 236 236 0 0 1-236-236 236 236 0 0 1 236-236 236 236 0 0 1 236 236z" stroke-width="40"/>',
+    "   </g>",
+    "</svg>",
+]
+
+PRESET_ROTATIONS = {"nxmee": 335, "antiviral": 160}
 
 class HexAuth(object):
     # Class for authenticating hex colors are entered in the correct arguments
@@ -23,6 +41,52 @@ class HexAuth(object):
                 "Invalid hex color entered, plase use format #AABBCC or #ABC"
             )
         return value
+
+def create_temp_file(args: argparse.Namespace) -> PurePath:
+    """Creates the SVG file to convert
+
+    This function uses the passed in arguments to construct a temporary SVG file
+    with the correct orientation, background and logo colors
+
+    Args:
+        args: the argument namespace from parse_args()
+    
+    Returns:
+        PurePath representation of where the SVG is stored
+
+    """
+
+    logo_data = BASE_LOGO
+
+    # Remove background if not specified
+    if not args.background:
+        logo_data.pop(1)
+
+    # Getting logo rotation
+    for preset in PRESET_ROTATIONS.keys():
+        if preset in args:
+            rotation = PRESET_ROTATIONS[preset]
+            break
+    else:
+        rotation = args.rotation
+
+    style = {
+        "bg_fill": args.background,
+        "rotation": str(rotation),
+        "logo_stroke": args.color,
+    }
+    logo_data_formatted = []
+    for line in logo_data:
+        logo_data_formatted.append(line.format(**style))
+
+    temp_dir = tempfile.gettempdir()
+    temp_path = PurePath(temp_dir)
+    temp_path = temp_path.joinpath("temp_image.svg")
+
+    with open(str(temp_path), "w") as temp_writer:
+        temp_writer.writelines(logo_data_formatted)
+
+    return temp_path
 
 def parse_args() -> argparse.Namespace:
     """Parses the script's arguments
@@ -86,6 +150,7 @@ def parse_args() -> argparse.Namespace:
 
 def main():
     args = parse_args()
+    temp_location = create_temp_file(args)
 
 if __name__ == "__main__":
     main()
