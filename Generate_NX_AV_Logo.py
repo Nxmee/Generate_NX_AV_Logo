@@ -42,51 +42,7 @@ class HexAuth(object):
             )
         return value
 
-def create_temp_file(args: argparse.Namespace) -> PurePath:
-    """Creates the SVG file to convert
 
-    This function uses the passed in arguments to construct a temporary SVG file
-    with the correct orientation, background and logo colors
-
-    Args:
-        args: the argument namespace from parse_args()
-    
-    Returns:
-        PurePath representation of where the SVG is stored
-
-    """
-
-    logo_data = BASE_LOGO
-
-    # Remove background if not specified
-    if not args.background:
-        logo_data.pop(1)
-
-    # Getting logo rotation
-    for preset in PRESET_ROTATIONS.keys():
-        if preset in args:
-            rotation = PRESET_ROTATIONS[preset]
-            break
-    else:
-        rotation = args.rotation
-
-    style = {
-        "bg_fill": args.background,
-        "rotation": str(rotation),
-        "logo_stroke": args.color,
-    }
-    logo_data_formatted = []
-    for line in logo_data:
-        logo_data_formatted.append(line.format(**style))
-
-    temp_dir = tempfile.gettempdir()
-    temp_path = PurePath(temp_dir)
-    temp_path = temp_path.joinpath("temp_image.svg")
-
-    with open(str(temp_path), "w") as temp_writer:
-        temp_writer.writelines(logo_data_formatted)
-
-    return temp_path
 
 def parse_args() -> argparse.Namespace:
     """Parses the script's arguments
@@ -147,6 +103,52 @@ def parse_args() -> argparse.Namespace:
 
     args = parser.parse_args()
     return args
+
+def create_temp_file(args: argparse.Namespace) -> PurePath:
+    """Creates the SVG file to convert
+
+    This function uses the passed in arguments to construct a temporary SVG file
+    with the correct orientation, background and logo colors
+
+    Args:
+        args: the argument namespace from parse_args()
+    
+    Returns:
+        PurePath representation of where the SVG is stored
+
+    """
+
+    logo_data = BASE_LOGO
+
+    # Remove background if not specified
+    if not args.background:
+        logo_data.pop(1)
+
+    # Getting logo rotation
+    for preset in PRESET_ROTATIONS.keys():
+        if preset in args:
+            rotation = PRESET_ROTATIONS[preset]
+            break
+    else:
+        rotation = args.rotation
+
+    style = {
+        "bg_fill": args.background,
+        "rotation": str(rotation),
+        "logo_stroke": args.color,
+    }
+    logo_data_formatted = []
+    for line in logo_data:
+        logo_data_formatted.append(line.format(**style))
+
+    temp_dir = tempfile.gettempdir()
+    temp_path = PurePath(temp_dir)
+    temp_path = temp_path.joinpath("temp_image.svg")
+
+    with open(str(temp_path), "w") as temp_writer:
+        temp_writer.writelines(logo_data_formatted)
+
+    return temp_path
 
 def main():
     args = parse_args()
