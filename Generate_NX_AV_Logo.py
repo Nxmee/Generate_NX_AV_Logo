@@ -173,6 +173,10 @@ def convert_svg(args: argparse.Namespace, temp_location: PurePath):
         check_call(inkscape_string)
 
 def main():
+    try:
+        check_call('inkscape -?')
+    except FileNotFoundError:
+        raise EnvironmentError("Inkscape not found in PATH or not functional.")
     args = parse_args()
     temp_location = create_temp_file(args)
     convert_svg(args, temp_location)
